@@ -1,50 +1,31 @@
 (function($) {
-  describe("Beam 'Html'", function() {
-    it("detects an 'html' entry", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "div#test": {},
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+  describe("Toast", function() {
+    var toast = null;
 
-      //"div#test": {}
-//      expect(document.getElementById("#test")).not.toBeNull();
-      expect($("#test").get(0)).not.toBeNull();
+    afterEach(function() {
+      toast.remove();
     });
-    
+
     it("detects and returns errors", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
+      var html = {
             "h2#star#*": {},
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      };
+      toast = $.toast(html).appendTo('body');
 
       //"h2#star#*": {}
-      expect(document.getElementById("star")).toBeNull();
-      expect(document.getElementById("*")).toBeNull();
-      expect(document.getElementsByTagName("h2")[0]).toBeUndefined();
+      expect(toast).toBeNull();
       expect("errors").toBe("detected and returned");
     });
 
     it("sets the last id found to the node", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "#test": {},
-            "#test1#id1": {},
-            "div#test2#id2": {},
-            "h1#test3#d3#test3": {},
-            "#div\\:dfg\\.ze": {},
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      var html = {
+        "#test": {},
+        "#test1#id1": {},
+        "div#test2#id2": {},
+        "h1#test3#d3#test3": {},
+        "#div\\:dfg\\.ze": {},
+      };
+      toast = $.toast(html).appendTo('body');
 
       expect(document.getElementById("test-html")).not.toBeNull();
       //"#test": {}
@@ -64,22 +45,18 @@
     });
     
     it("add classes defined", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            div: {},
-            "#test": {},
-            "#test-t.t": {},
-            "#test-advanced.t-34545er": {},
-            ".t": {},
-            "#test-ab.a.b#re-ab": {},
-            "div#divtest-ab.a#divre-ab.b": {},
-            "h1#test-h1.a.b#re-h1": {},
-            "#*.star": {},
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      var html = {
+        div: {},
+        "#test": {},
+        "#test-t.t": {},
+        "#test-advanced.t-34545er": {},
+        ".t": {},
+        "#test-ab.a.b#re-ab": {},
+        "div#divtest-ab.a#divre-ab.b": {},
+        "h1#test-h1.a.b#re-h1": {},
+        "#*.star": {},
+      }
+      toast = $.toast(html).appendTo('body');
 
       //div: {}
       //"#test": {}
@@ -112,17 +89,15 @@
       expect(document.getElementById("*")).toBeNull();
       expect($("#test-html .star").get(0)).not.toBeNull();
       expect($("#test-html .star").get(0).id).toEqual("");
+      
+      res.remove();
     });
 
     it("creates a default div element if no type is given", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "#test": {}
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      var html = {
+        "#test": {}
+      }
+      toast = $.toast(html).appendTo('body');
 
       //"#test": {}
       expect($("#test-html #test").get(0)).not.toBeNull();
@@ -130,163 +105,153 @@
     });
 
     it("creates a element of the type given", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            //http://www.w3.org/TR/html5/sections.html
-            "h1#h1-test": {},
-            "h2#h2-test": {},
-            "h3#h3-test": {},
-            "h4#h4-test": {},
-            "h5#h5-test": {},
-            "h6#h6-test": {},
-            //http://www.w3.org/TR/html5/grouping-content.html
-            "p#p-test": {},
-            "hr#hr-test": {},
-            "pre#pre-test": {},
-            "blockquote#blockquote-test": {},
-            "ol#ol-test": {},
-            "ul#ul-test": {},
-            "li#li-test": {},
-            "dl#dl-test": {},
-            "dt#dt-test": {},
-            "dd#dd-test": {},
-            "figure#figure-test": {},
-            "figcaption#figcaption-test": {},
-            "div#div-test": {},
-            "main#main-test": {},
-            //http://www.w3.org/TR/html5/text-level-semantics.html
-            "a#a-test": {},//Hyperlinks
-            "em#em-test": {},//Stress emphasis
-            "strong#strong-test": {},//Importance
-            "small#small-test": {},//Side comments
-            "s#s-test": {},//Inaccurate text
-            "cite#cite-test": {},//Titles of works
-            "q#q-test": {},//Quotations
-            "dfn#dfn-test": {},//Defining instance
-            "abbr#abbr-test": {},//Abbreviations
-            "data#data-test": {},//Machine-readable equivalent
-            "time#time-test": {},//Machine-readable equivalent of date- or time-related data
-            "code#code-test": {},//Computer code
-            "var#var-test": {},//Variables
-            "samp#samp-test": {},//Computer output
-            "kbd#kbd-test": {},//User input
-            "sub#sub-test": {},//Subscripts
-            "sup#sup-test": {},//Superscripts
-            "i#i-test": {},//Alternative voice
-            "b#b-test": {},//Keywords
-            "u#u-test": {},//Annotations
-            "mark#mark-test": {},//Highlight
-            "ruby#ruby-test": {},//Ruby annotations
-            "rt#rt-test": {},//Ruby annotations
-            "rp#rp-test": {},//Ruby annotations
-            "bdi#bdi-test": {},//Text directionality isolation
-            "bdo#bdo-test": {},//Text directionality formatting
-            "span#span-test": {},//Other
-            "br#br-test": {},//Line break
-            "wbr#wbr-test": {},//Line breaking opportunity
-            //http://www.w3.org/TR/html5/edits.html
-            "ins#ins-test": {},
-            "del#del-test": {},
-            //http://www.w3.org/TR/html5/embedded-content-0.html
-            "img#img-test": {},
-            "iframe#iframe-test": {},
-            "embed#embed-test": {},
-            "object#object-test": {},
-            "param#param-test": {},
-            "video#video-test": {},
-            "audio#audio-test": {},
-            "source#source-test": {},
-            "track#track-test": {},
-            "canvas#canvas-test": {},
-            "map#map-test": {},
-            "area#area-test": {},
-            "math#math-test": {},
-            "svg#svg-test": {},
-            //http://www.w3.org/TR/html5/tabular-data.html
-            "table#table-test": {},
-            "caption#caption-test": {},
-            "colgroup#colgroup-test": {},
-            "col#col-test": {},
-            "tbody#tbody-test": {},
-            "thead#thead-test": {},
-            "tfoot#tfoot-test": {},
-            "tr#tr-test": {},
-            "td#td-test": {},
-            "th#th-test": {},
-            //http://www.w3.org/TR/html5/forms.html
-            "form#form-test": {},
-            "fieldset#fieldset-test": {},
-            "legend#legend-test": {},
-            "label#label-test": {},
-            "input:default#input-default-test": {},//Default is text input
-            "input:hidden#input-hidden-test": {},//Hidden
-            "input:text#input-text-test": {},//Text
-            //Unsupported by jQuery "input:search#input-search-test": {},//Search
-            //Unsupported by jQuery "input:tel#input-tel-test": {},//Telephone
-            //Unsupported by jQuery "input:url#input-url-test": {},//URL
-            //Unsupported by jQuery "input:email#input-email-test": {},//E-mail
-            "input:password#input-password-test": {},//Password
-            //Unsupported by jQuery "input:datetime#input-datetime-test": {},//Date and Time
-            //Unsupported by jQuery "input:date#input-date-test": {},//Date
-            //Unsupported by jQuery "input:month#input-month-test": {},//Month
-            //Unsupported by jQuery "input:week#input-week-test": {},//Week
-            //Unsupported by jQuery "input:time#input-time-test": {},//Time
-            //Unsupported by jQuery "input:datetime-local#input-datetime-local-test": {},//Local Date and Time
-            //Unsupported by jQuery "input:number#input-number-test": {},//Number
-            //Unsupported by jQuery "input:range#input-range-test": {},//Range
-            //Unsupported by jQuery "input:color#input-color-test": {},//Color
-            "input:checkbox#input-checkbox-test": {},//Checkbox
-            "input:radio#input-radio-test": {},//Radio Button
-            "input:file#input-file-test": {},//File Upload
-            "input:submit#input-submit-test": {},//Submit Button
-            "input:image#input-image-test": {},//Image Button
-            "input:reset#input-reset-test": {},//Reset Button
-            "input:button#input-button-test": {},//Button
-            "button#button-test": {},
-            "select#select-test": {},
-            "datalist#datalist-test": {},
-            "optgroup#optgroup-test": {},
-            "option#option-test": {},
-            "textarea#textarea-test": {},
-            "keygen#keygen-test": {},
-            "output#output-test": {},
-            "progress#progress-test": {},
-            //http://www.w3.org/TR/html5/interactive-elements.html
-            "details#details-test": {},
-            "summary#summary-test": {},
-            "dialog#dialog-test": {},
-            //http://www.w3.org/TR/html5/links.html
-            "a#a-test": {},
-            //"area#area-test": {}
-          }
-        }
-      });
+      var html = {
+        //http://www.w3.org/TR/html5/sections.html
+        "h1#h1-test": {},
+        "h2#h2-test": {},
+        "h3#h3-test": {},
+        "h4#h4-test": {},
+        "h5#h5-test": {},
+        "h6#h6-test": {},
+        //http://www.w3.org/TR/html5/grouping-content.html
+        "p#p-test": {},
+        "hr#hr-test": {},
+        "pre#pre-test": {},
+        "blockquote#blockquote-test": {},
+        "ol#ol-test": {},
+        "ul#ul-test": {},
+        "li#li-test": {},
+        "dl#dl-test": {},
+        "dt#dt-test": {},
+        "dd#dd-test": {},
+        "figure#figure-test": {},
+        "figcaption#figcaption-test": {},
+        "div#div-test": {},
+        "main#main-test": {},
+        //http://www.w3.org/TR/html5/text-level-semantics.html
+        "a#a-test": {},//Hyperlinks
+        "em#em-test": {},//Stress emphasis
+        "strong#strong-test": {},//Importance
+        "small#small-test": {},//Side comments
+        "s#s-test": {},//Inaccurate text
+        "cite#cite-test": {},//Titles of works
+        "q#q-test": {},//Quotations
+        "dfn#dfn-test": {},//Defining instance
+        "abbr#abbr-test": {},//Abbreviations
+        "data#data-test": {},//Machine-readable equivalent
+        "time#time-test": {},//Machine-readable equivalent of date- or time-related data
+        "code#code-test": {},//Computer code
+        "var#var-test": {},//Variables
+        "samp#samp-test": {},//Computer output
+        "kbd#kbd-test": {},//User input
+        "sub#sub-test": {},//Subscripts
+        "sup#sup-test": {},//Superscripts
+        "i#i-test": {},//Alternative voice
+        "b#b-test": {},//Keywords
+        "u#u-test": {},//Annotations
+        "mark#mark-test": {},//Highlight
+        "ruby#ruby-test": {},//Ruby annotations
+        "rt#rt-test": {},//Ruby annotations
+        "rp#rp-test": {},//Ruby annotations
+        "bdi#bdi-test": {},//Text directionality isolation
+        "bdo#bdo-test": {},//Text directionality formatting
+        "span#span-test": {},//Other
+        "br#br-test": {},//Line break
+        "wbr#wbr-test": {},//Line breaking opportunity
+        //http://www.w3.org/TR/html5/edits.html
+        "ins#ins-test": {},
+        "del#del-test": {},
+        //http://www.w3.org/TR/html5/embedded-content-0.html
+        "img#img-test": {},
+        "iframe#iframe-test": {},
+        "embed#embed-test": {},
+        "object#object-test": {},
+        "param#param-test": {},
+        "video#video-test": {},
+        "audio#audio-test": {},
+        "source#source-test": {},
+        "track#track-test": {},
+        "canvas#canvas-test": {},
+        "map#map-test": {},
+        "area#area-test": {},
+        "math#math-test": {},
+        "svg#svg-test": {},
+        //http://www.w3.org/TR/html5/tabular-data.html
+        "table#table-test": {},
+        "caption#caption-test": {},
+        "colgroup#colgroup-test": {},
+        "col#col-test": {},
+        "tbody#tbody-test": {},
+        "thead#thead-test": {},
+        "tfoot#tfoot-test": {},
+        "tr#tr-test": {},
+        "td#td-test": {},
+        "th#th-test": {},
+        //http://www.w3.org/TR/html5/forms.html
+        "form#form-test": {},
+        "fieldset#fieldset-test": {},
+        "legend#legend-test": {},
+        "label#label-test": {},
+        "input:default#input-default-test": {},//Default is text input
+        "input:hidden#input-hidden-test": {},//Hidden
+        "input:text#input-text-test": {},//Text
+        //Unsupported by jQuery "input:search#input-search-test": {},//Search
+        //Unsupported by jQuery "input:tel#input-tel-test": {},//Telephone
+        //Unsupported by jQuery "input:url#input-url-test": {},//URL
+        //Unsupported by jQuery "input:email#input-email-test": {},//E-mail
+        "input:password#input-password-test": {},//Password
+        //Unsupported by jQuery "input:datetime#input-datetime-test": {},//Date and Time
+        //Unsupported by jQuery "input:date#input-date-test": {},//Date
+        //Unsupported by jQuery "input:month#input-month-test": {},//Month
+        //Unsupported by jQuery "input:week#input-week-test": {},//Week
+        //Unsupported by jQuery "input:time#input-time-test": {},//Time
+        //Unsupported by jQuery "input:datetime-local#input-datetime-local-test": {},//Local Date and Time
+        //Unsupported by jQuery "input:number#input-number-test": {},//Number
+        //Unsupported by jQuery "input:range#input-range-test": {},//Range
+        //Unsupported by jQuery "input:color#input-color-test": {},//Color
+        "input:checkbox#input-checkbox-test": {},//Checkbox
+        "input:radio#input-radio-test": {},//Radio Button
+        "input:file#input-file-test": {},//File Upload
+        "input:submit#input-submit-test": {},//Submit Button
+        "input:image#input-image-test": {},//Image Button
+        "input:reset#input-reset-test": {},//Reset Button
+        "input:button#input-button-test": {},//Button
+        "button#button-test": {},
+        "select#select-test": {},
+        "datalist#datalist-test": {},
+        "optgroup#optgroup-test": {},
+        "option#option-test": {},
+        "textarea#textarea-test": {},
+        "keygen#keygen-test": {},
+        "output#output-test": {},
+        "progress#progress-test": {},
+        //http://www.w3.org/TR/html5/interactive-elements.html
+        "details#details-test": {},
+        "summary#summary-test": {},
+        "dialog#dialog-test": {},
+        //http://www.w3.org/TR/html5/links.html
+        "a#a-test": {},
+        //"area#area-test": {}
+      };
       var elts = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "hr", "pre", "blockquote", "ol", "ul",
-                  "li", "dl", "dt", "dd", "figure", "figcaption", "div", "main", "a", "em",
-                  "strong", "small", "s", "cite", "q", "dfn", "abbr", "data", "time", "code",
-                  "var", "samp", "kbd", "sub", "sup", "i", "b", "u", "mark", "ruby", "rt", "rp", "bdi",
-                  "bdo", "span", "br", "wbr", "ins", "del", "img", "iframe", "embed", "object",
-                  "param", "video", "audio", "source", "track", "canvas", "map", "area", "math",
-                  "svg", "table", "caption", "colgroup", "col", "tbody", "thead", "tfoot", "tr",
-                  "td", "th", "form", "fieldset", "legend", "label", "input-default", "input-hidden",
-                  "input-text",
-                  "input-password",
-                  //unsupported by jQuery
-                  //"input-search", "input-tel", "input-url", "input-email", "input-datetime",
-                  //"input-date", "input-month", "input-week", "input-time", "input-datetime-local",
-                  //"input-number", "input-range", "input-color",
-                  //-
-                  "input-checkbox",
-                  "input-radio",
-                  "input-file",
-                  "input-submit",
-                  "input-image",
-                  "input-reset",
-                  "input-button",
-                  "button", "select", "datalist", "optgroup", "option",
-                  "textarea", "keygen", "output", "progress", "details", "summary", "dialog", "a"];
-      affix("#test-html").isA("TestHtml");
+                       "li", "dl", "dt", "dd", "figure", "figcaption", "div", "main", "a", "em",
+                       "strong", "small", "s", "cite", "q", "dfn", "abbr", "data", "time", "code",
+                       "var", "samp", "kbd", "sub", "sup", "i", "b", "u", "mark", "ruby", "rt", "rp", "bdi",
+                       "bdo", "span", "br", "wbr", "ins", "del", "img", "iframe", "embed", "object",
+                       "param", "video", "audio", "source", "track", "canvas", "map", "area", "math",
+                       "svg", "table", "caption", "colgroup", "col", "tbody", "thead", "tfoot", "tr",
+                       "td", "th", "form", "fieldset", "legend", "label", "input-default", "input-hidden",
+                       "input-text",
+                       "input-password",
+                       //unsupported by jQuery
+                       //"input-search", "input-tel", "input-url", "input-email", "input-datetime",
+                       //"input-date", "input-month", "input-week", "input-time", "input-datetime-local",
+                       //"input-number", "input-range", "input-color",
+                       //-
+                       "input-checkbox",  "input-radio", "input-file", "input-submit", "input-image",
+                       "input-reset", "input-button", "button", "select", "datalist", "optgroup", "option",
+                       "textarea", "keygen", "output", "progress", "details", "summary", "dialog", "a"];
+      toast = $.toast(html).appendTo('body');
 
       $.each(elts, function(key, val) {
         expect($("#test-html #" + val + "-test").get(0)).not.toBeNull();
@@ -298,14 +263,10 @@
     });
   
     it("creates input node with no type given as the defaut text input", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "input#input-test": {}
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      var html = {
+        "input#input-test": {}
+      }
+      toast = $.toast(html).appendTo('body');
 
       expect(document.getElementById("test-html")).not.toBeNull();
       //"input#input-test": {}
@@ -315,24 +276,20 @@
     });
 
     it("handles multi-level", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "#test-parent": {
-              "#test-child": {},
-              "#test-child1": {
-                "#test-child11": {},
-              },
-              "#test-child2": {
-                "#test-child21": {},
-                "#test-child22": {},
-                "#test-child23": {}
-              }
-            }
+      var html = {
+        "#test-parent": {
+          "#test-child": {},
+          "#test-child1": {
+            "#test-child11": {},
+          },
+          "#test-child2": {
+            "#test-child21": {},
+            "#test-child22": {},
+            "#test-child23": {}
           }
         }
-      });
-      affix("#test-html").isA("TestHtml");
+      }
+      toast = $.toast(html).appendTo('body');
 
       expect(document.getElementById("test-html")).not.toBeNull();
       //"#test-parent": {
@@ -353,17 +310,13 @@
     });
     
     it("sets specified attributes on element", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "div#test-alt[alt=alt text]": {},
-            "div#test-multiple[alt=alt text].classname[alt=another alt text;value=34;][custom=1234custom]": {},
-            "div#test-empty[].classname[;;;;][]": {},
-            "input:text#test-input[value=text of input;type=checkbox]": {},
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      var html = {
+        "div#test-alt[alt=alt text]": {},
+        "div#test-multiple[alt=alt text].classname[alt=another alt text;value=34;][custom=1234custom]": {},
+        "div#test-empty[].classname[;;;;][]": {},
+        "input:text#test-input[value=text of input;type=checkbox]": {},
+      }
+      toast = $.toast(html).appendTo('body');
 
       //"div#test-alt[alt=alt text]": {}
       expect($("#test-html #test-alt").get(0)).not.toBeNull();
@@ -382,15 +335,11 @@
     });
     
     it("sets specified style on element", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "div#test{width:42px;height:23px}": {},
-            "div#test-multidefinition{width:42px;height:23px}{width:23px;height:42px}": {},
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      var html = {
+        "div#test{width:42px;height:23px}": {},
+        "div#test-multidefinition{width:42px;height:23px}{width:23px;height:42px}": {},
+      }
+      toast = $.toast(html).appendTo('body');
 
       expect(document.getElementById("test-html")).not.toBeNull();
       //"div#test{width:42px;height:23px}": {}
@@ -404,16 +353,12 @@
     });
 
     it("associates the specified reference to element", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "#test-ref$ref": {},
-            "#test-multiple$ref$ref-multiple": {},
-            "#test-empty$$": {}
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      var html = {
+        "#test-ref$ref": {},
+        "#test-multiple$ref$ref-multiple": {},
+        "#test-empty$$": {}
+      }
+      toast = $.toast(html).appendTo('body');
 
       expect(document.getElementById("test-html")).not.toBeNull();
       //"#test-ref$ref": {}
@@ -428,36 +373,29 @@
     });
 
     it("accepts multiplier", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-          }
-        }
-      });
+      var html = {
+      }
+      toast = $.toast(html).appendTo('body');
       expect("To do").toBe("done");
     });
 
     it("sets properties specified by _property", function() {
-      $.abacus({ manifest: { name: 'TestHtml' },
-        TestHtml: {
-          html: {
-            "$div-id": {id: "test-id"},
-            "$div-class": {id: "test-class", class: "a"},
-            "$div-classes": {id: "test-classes", classes: "a b"},
-            "$div-classClasses": {id: "test-classClasses", class: "a b"},
-            "$div-attribute": {id: "test-attribute", attribute: {alt: "alt text"}},
-            "$div-attributes": {id: "test-attributes", attributes: {alt: "alt text"}},
-            "$div-attr": {id: "test-attr", attr: {alt: "alt text"}},
-            "$div-attrs": {id: "test-attrs", attrs: {alt: "alt text"}},
-            "$div-style": {id: "test-style", style: {width: "42px"}},
-            "$div-styles": {id: "test-styles", styles: {width: "42px"}},
-            "$div-css": {id: "test-css", css: {"background-color": "red"}},
-            "$div-ref": {id: "test-ref", ref: "div-ref"},
-            "$div-reference": {id: "test-reference", reference: "div-reference"},
-          }
-        }
-      });
-      affix("#test-html").isA("TestHtml");
+      var html = {
+        "$div-id": {id: "test-id"},
+        "$div-class": {id: "test-class", class: "a"},
+        "$div-classes": {id: "test-classes", classes: "a b"},
+        "$div-classClasses": {id: "test-classClasses", class: "a b"},
+        "$div-attribute": {id: "test-attribute", attribute: {alt: "alt text"}},
+        "$div-attributes": {id: "test-attributes", attributes: {alt: "alt text"}},
+        "$div-attr": {id: "test-attr", attr: {alt: "alt text"}},
+        "$div-attrs": {id: "test-attrs", attrs: {alt: "alt text"}},
+        "$div-style": {id: "test-style", style: {width: "42px"}},
+        "$div-styles": {id: "test-styles", styles: {width: "42px"}},
+        "$div-css": {id: "test-css", css: {"background-color": "red"}},
+        "$div-ref": {id: "test-ref", ref: "div-ref"},
+        "$div-reference": {id: "test-reference", reference: "div-reference"},
+      }
+      toast = $.toast(html).appendTo('body');
 
       expect(document.getElementById("test-html")).not.toBeNull();
       //"div": {id: "test-div"}
