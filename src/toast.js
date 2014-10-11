@@ -183,6 +183,7 @@
         parent.appendChild(node);
         break;
     }
+    return parent;
   };
 
   $.toast = function(elt, parent) {
@@ -192,5 +193,7 @@
     $.each(elt, function(e, c) {
       buildElement(e, c, parent);
     });
+    
+    return $(parent);
   };
 }(window.jQuery));
