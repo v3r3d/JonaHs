@@ -23,11 +23,10 @@
         "#test1#id1": {},
         "div#test2#id2": {},
         "h1#test3#d3#test3": {},
-        "#div\\:dfg\\.ze": {},
+        "#div\:dfg\.ze": {},
       };
       toast = $.toast(html).appendTo('body');
 
-      expect(document.getElementById("test-html")).not.toBeNull();
       //"#test": {}
       expect(document.getElementById("test")).not.toBeNull();
       expect(document.getElementById("test").tagName).toEqual("DIV");
@@ -41,7 +40,7 @@
       expect(document.getElementById("test3")).not.toBeNull();
       expect(document.getElementById("test3").tagName).toEqual("H1");
       //"#div\\:dfg\\.ze": {}
-      expect(document.getElementById("div\\:dfg\\.ze")).not.toBeNull();
+      expect(document.getElementById("div\:dfg\.ze")).not.toBeNull();
     });
     
     it("add classes defined", function() {
@@ -69,8 +68,8 @@
       expect(document.getElementById("test-advanced")).not.toBeNull();
       expect(document.getElementById("test-advanced").className).toEqual("t-34545er");
       //".t": {}
-      expect($("#test-html .t").get(0)).not.toBeNull();
-      expect($("#test-html .t").get(0).className).toEqual("t");
+      expect($(".t").get(0)).not.toBeNull();
+      expect($(".t").get(0).className).toEqual("t");
       //"#test-ab.a.b#re-ab": {}
       expect(document.getElementById("test-ab")).toBeNull();
       expect(document.getElementById("re-ab")).not.toBeNull();
@@ -87,10 +86,8 @@
       expect(document.getElementById("re-h1").className).toEqual("b a");
       //"#*.star": {}
       expect(document.getElementById("*")).toBeNull();
-      expect($("#test-html .star").get(0)).not.toBeNull();
-      expect($("#test-html .star").get(0).id).toEqual("");
-      
-      res.remove();
+      expect($(".star").get(0)).not.toBeNull();
+      expect($(".star").get(0).id).toEqual("");
     });
 
     it("creates a default div element if no type is given", function() {
@@ -100,11 +97,11 @@
       toast = $.toast(html).appendTo('body');
 
       //"#test": {}
-      expect($("#test-html #test").get(0)).not.toBeNull();
-      expect($("#test-html #test").tagName()).toBe("div");
+      expect($("#test").get(0)).not.toBeNull();
+      expect($("#test").tagName()).toBe("div");
     });
 
-    it("creates a element of the type given", function() {
+    it("creates a element of the given type", function() {
       var html = {
         //http://www.w3.org/TR/html5/sections.html
         "h1#h1-test": {},
@@ -254,11 +251,11 @@
       toast = $.toast(html).appendTo('body');
 
       $.each(elts, function(key, val) {
-        expect($("#test-html #" + val + "-test").get(0)).not.toBeNull();
+        expect($("#" + val + "-test").get(0)).not.toBeNull();
         if (val.match(/input-.*/))
-          expect($("#test-html #" + val + "-test").tagName()).toBe(val.replace('-', ':').replace('default', 'text'));
+          expect($("#" + val + "-test").tagName()).toBe(val.replace('-', ':').replace('default', 'text'));
         else
-          expect($("#test-html #" + val + "-test").tagName()).toBe(val);
+          expect($("#" + val + "-test").tagName()).toBe(val);
       });
     });
   
@@ -268,7 +265,6 @@
       }
       toast = $.toast(html).appendTo('body');
 
-      expect(document.getElementById("test-html")).not.toBeNull();
       //"input#input-test": {}
       expect(document.getElementById("input-test")).not.toBeNull();
       expect(document.getElementById("input-test").tagName).toBe("INPUT");
@@ -291,7 +287,6 @@
       }
       toast = $.toast(html).appendTo('body');
 
-      expect(document.getElementById("test-html")).not.toBeNull();
       //"#test-parent": {
       expect(document.getElementById("test-parent")).not.toBeNull();
       //  "#test-child": {}
@@ -319,19 +314,19 @@
       toast = $.toast(html).appendTo('body');
 
       //"div#test-alt[alt=alt text]": {}
-      expect($("#test-html #test-alt").get(0)).not.toBeNull();
-      expect($("#test-html #test-alt").get(0).alt).toEqual("alt text");
+      expect($("#test-alt").get(0)).not.toBeNull();
+      expect($("#test-alt").get(0).alt).toEqual("alt text");
       //"div#test-multiple[alt=alt text].classname[alt=another alt text;value=34;][custom=1234custom]": {}
-      expect($("#test-html #test-multiple").get(0)).not.toBeNull();
-      expect($("#test-html #test-multiple").get(0)).not.toBeNull();
-      expect($("#test-html #test-multiple").get(0).alt).toEqual("another alt text");
-      expect($("#test-html #test-multiple").get(0).value).toEqual("34");
-      expect($("#test-html #test-multiple").get(0).custom).toEqual("1234custom");
+      expect($("#test-multiple").get(0)).not.toBeNull();
+      expect($("#test-multiple").get(0)).not.toBeNull();
+      expect($("#test-multiple").get(0).alt).toEqual("another alt text");
+      expect($("#test-multiple").get(0).value).toEqual("34");
+      expect($("#test-multiple").get(0).custom).toEqual("1234custom");
       //"div#test-empty[].classname[;;;;][]": {}
-      expect($("#test-html #test-empty").get(0)).not.toBeNull();
+      expect($("#test-empty").get(0)).not.toBeNull();
       //"input:text#test-input[value=text of input;type=checkbox]": {}
-      expect($("#test-html #test-input").get(0)).not.toBeNull();
-      expect($("#test-html #test-input").tagName()).toEqual("input:checkbox");
+      expect($("#test-input").get(0)).not.toBeNull();
+      expect($("#test-input").tagName()).toEqual("input:checkbox");
     });
     
     it("sets specified style on element", function() {
@@ -341,7 +336,6 @@
       }
       toast = $.toast(html).appendTo('body');
 
-      expect(document.getElementById("test-html")).not.toBeNull();
       //"div#test{width:42px;height:23px}": {}
       expect(document.getElementById("test")).not.toBeNull();
       expect(document.getElementById("test").style.width).toEqual("42px");
@@ -360,7 +354,6 @@
       }
       toast = $.toast(html).appendTo('body');
 
-      expect(document.getElementById("test-html")).not.toBeNull();
       //"#test-ref$ref": {}
       expect(document.getElementById("test-ref")).not.toBeNull();
       expect(document.getElementById("test-ref").reference).toEqual("ref");
@@ -379,7 +372,7 @@
       expect("To do").toBe("done");
     });
 
-    it("sets properties specified by _property", function() {
+    it("sets properties specified by property", function() {
       var html = {
         "$div-id": {id: "test-id"},
         "$div-class": {id: "test-class", class: "a"},
@@ -397,7 +390,6 @@
       }
       toast = $.toast(html).appendTo('body');
 
-      expect(document.getElementById("test-html")).not.toBeNull();
       //"div": {id: "test-div"}
       expect(document.getElementById("test-id")).not.toBeNull();
       expect(document.getElementById("test-id").reference).toEqual("div-id");
