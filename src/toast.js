@@ -10,12 +10,13 @@
 }
 
 */
-
 (function($, undefined) {
-  const reNAME = "[a-zA-Z](?:[a-zA-Z0-9-_])*";//TODO: handle '.' and ':' in names
+//  const reNAME = "[a-zA-Z](?:[a-zA-Z0-9-_])*";//TODO: handle special chars in names when backslashed
+  const reSPECIALS = "#\\.\\[\\]\\{\\}\\$"
+  const reNAME = "(?:\\\\["+reSPECIALS+"]|[^"+reSPECIALS+"])+";//TODO: handle special chars in names when backslashed
   const reINPUT = "^input:([a-zA-Z]+)";
   const reTYPE = "^([a-zA-Z0-9]*)";
-  const reID = "#("+reNAME+")(?:[^#]*)$";
+  const reID = "#("+reNAME+")[^#]*$";
   const reCLASS = "\\.("+reNAME+")";
   const reREF = "\\$("+reNAME+")(?:[^$]*)$";
   const reATTRS = "\\[([^\\]]*)\\]";
@@ -69,6 +70,7 @@
   
   var setId = function(node, elt) {
     var reId = new RegExp(reID, "g");// Find the last id
+    console.log(reId);
     var matchId = reId.exec(elt);
     if (matchId != null) {
       if (LOG) console.log("  Id : " + matchId[1]);
