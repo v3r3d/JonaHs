@@ -11,9 +11,8 @@
 
 */
 (function($, undefined) {
-//  const reNAME = "[a-zA-Z](?:[a-zA-Z0-9-_])*";//TODO: handle special chars in names when backslashed
   const reSPECIALS = "#\\.\\[\\]\\{\\}\\$"
-  const reNAME = "(?:\\\\["+reSPECIALS+"]|[^"+reSPECIALS+"])+";//TODO: handle special chars in names when backslashed
+  const reNAME = "(?:\\\\["+reSPECIALS+"]|[^"+reSPECIALS+"])+";
   const reINPUT = "^input:([a-zA-Z]+)";
   const reTYPE = "^([a-zA-Z0-9]*)";
   const reID = "#("+reNAME+")[^#]*$";
@@ -73,8 +72,8 @@
     console.log(reId);
     var matchId = reId.exec(elt);
     if (matchId != null) {
-      if (LOG) console.log("  Id : " + matchId[1]);
-      node.id = matchId[1];
+      if (LOG) console.log("  Id : " + matchId[1].replace("\\", ""));
+      node.id = matchId[1].replace("\\", "");
     }
     return node.id != "";
   }
