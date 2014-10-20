@@ -27,28 +27,47 @@
     it("sets the last id found to the node", function() {
       var html = {
         "#test": {},
-        "#test#id1": {},
-        "div#test#id2": {},
-        "h1#test#id3#id3": {},
-        "h1#test.class#id4": {},
-        "h1#test.class[foo=bar]#id4": {},
-        "h1#test#id4.class": {},
-        "h1#test#id4[foo=bar]": {},
+        "#test1#id1": {},
+        "div#test2#id2": {},
+        "h1#test3#id3#id3": {},
+        "h1#test4.class#id4": {},
+        "h1#test5.class[foo=bar]#id5": {},
+        "h1#test6#id6.class": {},
+        "h1#test7#id7[foo=bar]": {},
       };
       toast = $.toast(html).appendTo('body');
 
-      //"#test": {}
+      // "#test": {},
       expect(document.getElementById("test")).not.toBeNull();
       expect(document.getElementById("test").tagName).toEqual("DIV");
-      //"#test1#id1": {}
+      // "#test1#id1": {},
+      expect(document.getElementById("test1")).toBeNull();
       expect(document.getElementById("id1")).not.toBeNull();
       expect(document.getElementById("id1").tagName).toEqual("DIV");
-      //"div#test2#id2": {}
+      // "div#test2#id2": {},
+      expect(document.getElementById("test2")).toBeNull();
       expect(document.getElementById("id2")).not.toBeNull();
       expect(document.getElementById("id2").tagName).toEqual("DIV");
-      //"h1#test3#d3#test3": {}
-      expect(document.getElementById("test3")).not.toBeNull();
-      expect(document.getElementById("test3").tagName).toEqual("H1");
+      // "h1#test3#id3#id3": {},
+      expect(document.getElementById("test3")).toBeNull();
+      expect(document.getElementById("id3")).not.toBeNull();
+      expect(document.getElementById("id3").tagName).toEqual("H1");
+      // "h1#test4.class#id4": {},
+      expect(document.getElementById("test4")).toBeNull();
+      expect(document.getElementById("id4")).not.toBeNull();
+      expect(document.getElementById("id4").tagName).toEqual("H1");
+      // "h1#test5.class[foo=bar]#id4": {},
+      expect(document.getElementById("test5")).toBeNull();
+      expect(document.getElementById("id5")).not.toBeNull();
+      expect(document.getElementById("id5").tagName).toEqual("H1");
+      // "h1#test6#id4.class": {},
+      expect(document.getElementById("test6")).toBeNull();
+      expect(document.getElementById("id6")).not.toBeNull();
+      expect(document.getElementById("id6").tagName).toEqual("H1");
+      // "h1#test7#id4[foo=bar]": {},
+      expect(document.getElementById("test7")).toBeNull();
+      expect(document.getElementById("id7")).not.toBeNull();
+      expect(document.getElementById("id7").tagName).toEqual("H1");
     });
     
     it("accepts any special chars in names if backslashed", function() {
