@@ -8,7 +8,14 @@
 
     it("detects and returns errors", function() {
       var html = {
-            "h2#star#*": {},
+            "#": {},
+            "##": {},
+            "######": {},
+            "#.": {},
+            "#[": {},
+            "#]": {},
+            "#{": {},
+            "#}": {},
       };
       toast = $.toast(html).appendTo('body');
 
@@ -20,10 +27,13 @@
     it("sets the last id found to the node", function() {
       var html = {
         "#test": {},
-        "#test1#id1": {},
-        "div#test2#id2": {},
-        "h1#test3#d3#test3": {},
-        "#div\:dfg\.ze": {},
+        "#test#id1": {},
+        "div#test#id2": {},
+        "h1#test#id3#id3": {},
+        "h1#test.class#id4": {},
+        "h1#test.class[foo=bar]#id4": {},
+        "h1#test#id4.class": {},
+        "h1#test#id4[foo=bar]": {},
       };
       toast = $.toast(html).appendTo('body');
 
@@ -39,8 +49,69 @@
       //"h1#test3#d3#test3": {}
       expect(document.getElementById("test3")).not.toBeNull();
       expect(document.getElementById("test3").tagName).toEqual("H1");
-      //"#div\\:dfg\\.ze": {}
-      expect(document.getElementById("div\:dfg\.ze")).not.toBeNull();
+    });
+    
+    it("accepts any special chars in names if backslashed", function() {
+      var html = {
+        "div#\\#foo": {},
+        "div#\\:foo": {},
+        "div#\\.foo": {},
+        "div#\\[foo": {},
+        "div#\\]foo": {},
+        "div#\\{foo": {},
+        "div#\\}foo": {},
+        "div#id\\#foo": {},
+        "div#id\\:foo": {},
+        "div#id\\.foo": {},
+        "div#id\\[foo": {},
+        "div#id\\]foo": {},
+        "div#id\\{foo": {},
+        "div#id\\}foo": {},
+      };
+      toast = $.toast(html).appendTo('body');
+
+      // "div#\\#foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#\\:foo": {},
+      expect(document.getElementById(":foo")).not.toBeNull();
+      expect(document.getElementById(":foo").tagName).toEqual("DIV");
+      // "div#\\.foo": {},
+      expect(document.getElementById(".foo")).not.toBeNull();
+      expect(document.getElementById(".foo").tagName).toEqual("DIV");
+      // "div#\\[foo": {},
+      expect(document.getElementById("[foo")).not.toBeNull();
+      expect(document.getElementById("[foo").tagName).toEqual("DIV");
+      // "div#\\]foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#\\{foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#\\}foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#id\\#foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#id\\:foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#id\\.foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#id\\[foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#id\\]foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#id\\{foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
+      // "div#id\\}foo": {},
+      expect(document.getElementById("#foo")).not.toBeNull();
+      expect(document.getElementById("#foo").tagName).toEqual("DIV");
     });
     
     it("add classes defined", function() {
@@ -365,13 +436,6 @@
       expect(document.getElementById("test-empty").reference).toBeUndefined();
     });
 
-    it("accepts multiplier", function() {
-      var html = {
-      }
-      toast = $.toast(html).appendTo('body');
-      expect("To do").toBe("done");
-    });
-
     it("sets properties specified by property", function() {
       var html = {
         "$div-id": {id: "test-id"},
@@ -439,6 +503,13 @@
       //"$div-reference": {id: "test-reference", reference: "div-reference"}
       expect(document.getElementById("test-reference")).not.toBeNull();
       expect(document.getElementById("test-reference").reference).toEqual("div-reference");
+    });
+
+    it("accepts multiplier", function() {
+      var html = {
+      }
+      toast = $.toast(html).appendTo('body');
+      expect("To do").toBe("done");
     });
   });
 }(jQuery));
