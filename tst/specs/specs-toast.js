@@ -417,25 +417,6 @@
       expect(document.getElementById("test-multidefinition").style.height).toEqual("42px");
     });
 
-    it("associates the specified reference to element", function() {
-      var html = {
-        "#test-ref$ref": {},
-        "#test-multiple$ref$ref-multiple": {},
-        "#test-empty$$": {}
-      }
-      toast = $.toast(html).appendTo('body');
-
-      //"#test-ref$ref": {}
-      expect(document.getElementById("test-ref")).not.toBeNull();
-      expect(document.getElementById("test-ref").reference).toEqual("ref");
-      //"#test-multiple$ref$ref-multiple": {}
-      expect(document.getElementById("test-multiple")).not.toBeNull();
-      expect(document.getElementById("test-multiple").reference).toEqual("ref-multiple");
-      //"#test-empty$$": {}
-      expect(document.getElementById("test-empty")).not.toBeNull();
-      expect(document.getElementById("test-empty").reference).toBeUndefined();
-    });
-
     it("sets properties specified by property", function() {
       var html = {
         "$div-id": {id: "test-id"},
