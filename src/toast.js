@@ -11,11 +11,11 @@
 
 */
 (function($, undefined) {
-  const reSPECIALS = "#\\.\\[\\]\\{\\}\\$"
-  const reNAME = "(?:\\\\["+reSPECIALS+"]|[^"+reSPECIALS+"])+";
+  const reSPECIALS = "\\#\\.\\[\\]\\{\\}\\$\\=\\;\\:"
+  const reNAME = "(?:\\\\["+reSPECIALS+"]|[^"+reSPECIALS+"])*";
   const reINPUT = "^input:([a-zA-Z]+)";
   const reTYPE = "^([a-zA-Z0-9]*)";
-  const reID = "#("+reNAME+")[^#]*$";
+  const reID = "#("+reNAME+")";
   const reCLASS = "\\.("+reNAME+")";
   const reREF = "\\$("+reNAME+")(?:[^$]*)$";
   const reATTRS = "\\[([^\\]]*)\\]";
@@ -34,13 +34,13 @@
     var type = "";
 
     if (matchInput != null)
-        type = "input:"+matchInput[1].replace('default', 'text');//$("<input type='"++"'>");
+        type = "input:"+matchInput[1].replace('default', 'text');
     else
     {
       var matchType = reType.exec(elt);
  
       if (matchType != null)
-          type = matchType[1] != "" ? matchType[1] : "div";//$("<"+(matchType[1] != "" ? matchType[1] : "div")+">");
+          type = matchType[1] != "" ? matchType[1] : "div";
 
     }
     return type;
@@ -51,13 +51,13 @@
     var type = getType(elt).split(":");//split is for subtypes
 
     if (type[0] == "")
-      console.log("invalid type name");
+      throw "Toast: invalid type name '" + elt + "'";
     else
       node = document.createElement(type[0]);
 
     if (type[0] == "input")
       if (type[1] == "")
-        console.log("invalid input type");
+        throw "Toast: invalid input type '" + + "'";
       else
         node.type = type[1] || "text";
 
@@ -68,23 +68,33 @@
   }
   
   var setId = function(node, elt) {
-    var reId = new RegExp(reID, "g");// Find the last id
-    console.log(reId);
-    var matchId = reId.exec(elt);
-    if (matchId != null) {
-      if (LOG) console.log("  Id : " + matchId[1].replace("\\", ""));
-      node.id = matchId[1].replace("\\", "");
+    var reId = new RegExp(reID, "g");
+
+    while (null != (matchId = reId.exec(elt))) {
+      if (matchId[1] != "") {
+        if (LOG) console.log("  Id: " + matchId[1].replace("\\", ""));
+        node.id = matchId[1].replace("\\", "");
+      }
+      else
+        throw "Toast: empty id";
     }
+
     return node.id != "";
   }
   
   var setClasses = function(node, elt) {
     var reClass = new RegExp(reCLASS, "g");
+
     while (null != (matchClass = reClass.exec(elt))) {
-      if (LOG) console.log("  Class : " + matchClass[1]);
-      node.className = matchClass[1] + " " + node.className;
+      if (matchClass[1] != "") {
+        if (LOG) console.log("  Class: " + matchClass[1]);
+        node.className = matchClass[1] + " " + node.className;
+      }
+      else
+        throw "Toast: empty class";
     }
     node.className = node.className.slice(0, -1);
+
     return node.className != "";
   }
   
@@ -94,9 +104,13 @@
     var matched = false;
     while (null != (matchAttrs = reAttributes.exec(elt))) {
       while (null != (matchAttr = reAttribute.exec(matchAttrs[1]))) {
-        if (LOG) console.log("  Attribute : " + matchAttr[1] + " = " + matchAttr[2]);
-        node[matchAttr[1]] = matchAttr[2];
-        matched = true;
+        if (matchAttr[1] != "") {
+          if (LOG) console.log("  Attribute: " + matchAttr[1] + " = " + matchAttr[2]);
+          node[matchAttr[1]] = matchAttr[2];
+          matched = true;
+        }
+        else
+          throw "Toast: empty attribute";
       }
     }
     return matched;
@@ -107,12 +121,16 @@
     var reStyle = new RegExp(reSTYLE, "g");
     while (null != (matchStyles = reStyles.exec(elt))) {
       while (null != (matchStyle = reStyle.exec(matchStyles[1]))) {
-        var style = matchStyle[1].split('-');
-        var jsStyle = style[0];
-        for (var i = 1; i < style.length; i++)
-          jsStyle += style[i].charAt(0).toUpperCase() + style[i].slice(1);
-        if (LOG) console.log("  Style : " + jsStyle + " = " + matchStyle[2]);
-        node.style[jsStyle] = matchStyle[2];
+        if (matchStyle[1] != "") {
+          var style = matchStyle[1].split('-');
+          var jsStyle = style[0];
+          for (var i = 1; i < style.length; i++)
+            jsStyle += style[i].charAt(0).toUpperCase() + style[i].slice(1);
+          if (LOG) console.log("  Style: " + jsStyle + " = " + matchStyle[2]);
+          node.style[jsStyle] = matchStyle[2];
+        }
+        else
+          throw "Toast: empty style";
       }
     }
     return node.style.length > 0;
@@ -122,7 +140,7 @@
     var reRef = new RegExp(reREF, "g");// Find the last ref name
     var matchRef = reRef.exec(elt);
     if (matchRef != null) {
-      if (LOG) console.log("  Reference : " + matchRef[1]);
+      if (LOG) console.log("  Reference: " + matchRef[1]);
       node.reference = matchRef[1];
       o["$" + node.reference] = node;
     }
@@ -166,22 +184,20 @@
         break;
       default:
         var node = newElement(elt);
-        if (node == null)
-          return;
+        if ((node != null) && (node !== undefined)) {
+          matched = setId(node, elt);
+          matched = setClasses(node, elt) || matched;
+          matched = setAttributes(node, elt) || matched;
+          matched = setStyle(node, elt) || matched;
 
-        matched = setId(node, elt);
-        matched = setClasses(node, elt) || matched;
-        matched = setAttributes(node, elt) || matched;
-        matched = setStyle(node, elt) || matched;
-
-        if (matched)
           $.each(ctn, function(e, c) {
             buildElement(e, c, node);
           });
-        else
-          console.log("invalid entry: " + elt);
 
-        parent.appendChild(node);
+          parent.appendChild(node);
+        }
+        else
+          throw "Toast: invalid entry '" + elt + "'";
         break;
     }
     return parent;

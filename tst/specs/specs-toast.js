@@ -3,25 +3,27 @@
     var toast = null;
 
     afterEach(function() {
-      toast.remove();
+      if (toast)
+        toast.remove();
     });
 
-    it("detects and returns errors", function() {
-      var html = {
-            "#": {},
-            "##": {},
-            "######": {},
-            "#.": {},
-            "#[": {},
-            "#]": {},
-            "#{": {},
-            "#}": {},
-      };
-      toast = $.toast(html).appendTo('body');
-
-      //"h2#star#*": {}
-      expect(toast).toBeNull();
-      expect("errors").toBe("detected and returned");
+    it("detects and throws errors", function() {
+      //Empty names
+      expect(function(){$.toast({"#": {}}).appendTo('body');}).toThrow('Toast: empty id');
+      expect(function(){$.toast({"##": {}}).appendTo('body');}).toThrow('Toast: empty id');
+      expect(function(){$.toast({"#######id": {}}).appendTo('body');}).toThrow('Toast: empty id');
+      expect(function(){$.toast({".": {}}).appendTo('body');}).toThrow('Toast: empty class');
+      expect(function(){$.toast({"..": {}}).appendTo('body');}).toThrow('Toast: empty class');
+      expect(function(){$.toast({"......class": {}}).appendTo('body');}).toThrow('Toast: empty class');
+      expect(function(){$.toast({"[=]": {}}).appendTo('body');}).toThrow('Toast: empty attribute');
+      expect(function(){$.toast({"[=bar;foo=bar]": {}}).appendTo('body');}).toThrow('Toast: empty attribute');
+      expect(function(){$.toast({"[foo=bar;=bar]": {}}).appendTo('body');}).toThrow('Toast: empty attribute');
+      expect(function(){$.toast({"{:}": {}}).appendTo('body');}).toThrow('Toast: empty style');
+      expect(function(){$.toast({"{:bar;foo:bar}": {}}).appendTo('body');}).toThrow('Toast: empty style');
+      expect(function(){$.toast({"{foo:bar;:bar}": {}}).appendTo('body');}).toThrow('Toast: empty style');
+      //Unescaped chars in names
+      //Unknown node type
+      //Unknown input type
     });
 
     it("sets the last id found to the node", function() {
@@ -175,9 +177,9 @@
       expect(document.getElementById("re-h1").tagName).toEqual("H1");
       expect(document.getElementById("re-h1").className).toEqual("b a");
       //"#*.star": {}
-      expect(document.getElementById("*")).toBeNull();
+      expect(document.getElementById("*")).not.toBeNull();
       expect($(".star").get(0)).not.toBeNull();
-      expect($(".star").get(0).id).toEqual("");
+      expect($(".star").get(0).id).toEqual("*");
     });
 
     it("creates a default div element if no type is given", function() {
@@ -398,7 +400,6 @@
       var html = {
         "div#test-alt[alt=alt text]": {},
         "div#test-multiple[alt=alt text].classname[alt=another alt text;value=34;][custom=1234custom]": {},
-        "div#test-empty[].classname[;;;;][]": {},
         "input:text#test-input[value=text of input;type=checkbox]": {},
       }
       toast = $.toast(html).appendTo('body');
@@ -438,74 +439,55 @@
 
     it("sets properties specified by property", function() {
       var html = {
-        "$div-id": {id: "test-id"},
-        "$div-class": {id: "test-class", class: "a"},
-        "$div-classes": {id: "test-classes", classes: "a b"},
-        "$div-classClasses": {id: "test-classClasses", class: "a b"},
-        "$div-attribute": {id: "test-attribute", attribute: {alt: "alt text"}},
-        "$div-attributes": {id: "test-attributes", attributes: {alt: "alt text"}},
-        "$div-attr": {id: "test-attr", attr: {alt: "alt text"}},
-        "$div-attrs": {id: "test-attrs", attrs: {alt: "alt text"}},
-        "$div-style": {id: "test-style", style: {width: "42px"}},
-        "$div-styles": {id: "test-styles", styles: {width: "42px"}},
-        "$div-css": {id: "test-css", css: {"background-color": "red"}},
-        "$div-ref": {id: "test-ref", ref: "div-ref"},
-        "$div-reference": {id: "test-reference", reference: "div-reference"},
-      }
+        "div": {id: "test-id"},
+        "#test-class": { class: "a"},
+        "#test-classes": { classes: "a b"},
+        "#test-classClasses": { class: "a b"},
+        "#test-attribute": { attribute: {alt: "alt text"}},
+        "#test-attributes": { attributes: {alt: "alt text"}},
+        "#test-attr": { attr: {alt: "alt text"}},
+        "#test-attrs": { attrs: {alt: "alt text"}},
+        "#test-style": { style: {width: "42px"}},
+        "#test-styles": { styles: {width: "42px"}},
+        "#test-css": { css: {"background-color": "red"}}
+      };
       toast = $.toast(html).appendTo('body');
 
       //"div": {id: "test-div"}
       expect(document.getElementById("test-id")).not.toBeNull();
-      expect(document.getElementById("test-id").reference).toEqual("div-id");
       //"div": {id: "test-class", class: "a"}
       expect(document.getElementById("test-class")).not.toBeNull();
       expect(document.getElementById("test-class").className).toEqual("a");
-      expect(document.getElementById("test-class").reference).toEqual("div-class");
       //"$div-classes": {id: "test-classes", classes: "a b"}
       expect(document.getElementById("test-classes")).not.toBeNull();
       expect(document.getElementById("test-classes").className).toEqual("a b");
-      expect(document.getElementById("test-classes").reference).toEqual("div-classes");
       //"$div-classClasses": {id: "test-classClasses", class: "a b"}
       expect(document.getElementById("test-classClasses")).not.toBeNull();
       expect(document.getElementById("test-classClasses").className).toEqual("a b");
-      expect(document.getElementById("test-classClasses").reference).toEqual("div-classClasses");
       //"$div-attribute": {id: "test-attribute", attribute: {alt: "alt text"}}
       expect(document.getElementById("test-attribute")).not.toBeNull();
       expect(document.getElementById("test-attribute").alt).toEqual("alt text");
-      expect(document.getElementById("test-attribute").reference).toEqual("div-attribute");
       //"$div-attributes": {id: "test-attributes", attributes: {alt: "alt text"}},
       expect(document.getElementById("test-attributes")).not.toBeNull();
       expect(document.getElementById("test-attributes").alt).toEqual("alt text");
-      expect(document.getElementById("test-attributes").reference).toEqual("div-attributes");
       //"$div-attr": {id: "test-attr", attr: {alt: "alt text"}},
       expect(document.getElementById("test-attr")).not.toBeNull();
       expect(document.getElementById("test-attr").alt).toEqual("alt text");
-      expect(document.getElementById("test-attr").reference).toEqual("div-attr");
       //"$div-attrs": {id: "test-attrs", attrs: {alt: "alt text"}},
       expect(document.getElementById("test-attrs")).not.toBeNull();
       expect(document.getElementById("test-attrs").alt).toEqual("alt text");
-      expect(document.getElementById("test-attrs").reference).toEqual("div-attrs");
       //"$div-style": {id: "test-style", style: {width: "42px"}},
       expect(document.getElementById("test-style")).not.toBeNull();
       expect(document.getElementById("test-style").style.width).toEqual("42px");
-      expect(document.getElementById("test-style").reference).toEqual("div-style");
       //"$div-styles": {id: "test-styles", styles: {width: "42px"}},
       expect(document.getElementById("test-styles")).not.toBeNull();
       expect(document.getElementById("test-styles").style.width).toEqual("42px");
-      expect(document.getElementById("test-styles").reference).toEqual("div-styles");
       //"$div-css": {id: "test-css", css: {"background-color": "red"}},
       expect(document.getElementById("test-css")).not.toBeNull();
       expect(document.getElementById("test-css").style.backgroundColor).toEqual("red");
-      expect(document.getElementById("test-css").reference).toEqual("div-css");
-      //"$div-ref": {id: "test-ref", ref: "div-ref"}
-      expect(document.getElementById("test-ref")).not.toBeNull();
-      expect(document.getElementById("test-ref").reference).toEqual("div-ref");
-      //"$div-reference": {id: "test-reference", reference: "div-reference"}
-      expect(document.getElementById("test-reference")).not.toBeNull();
-      expect(document.getElementById("test-reference").reference).toEqual("div-reference");
     });
 
-    it("accepts multiplier", function() {
+    xit("accepts multiplier", function() {
       var html = {
       }
       toast = $.toast(html).appendTo('body');
